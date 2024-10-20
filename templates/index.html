@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document Upload and Chat</title>
+</head>
+<body>
+    <h1>Upload Document</h1>
+    <form id="upload-form" enctype="multipart/form-data">
+        <input type="file" name="file" required>
+        <button type="submit">Upload</button>
+    </form>
+
+    <h1>Chat with Document</h1>
+    <input type="text" id="message" placeholder="Ask a question...">
+    <button id="send">Send</button>
+
+    <div id="response"></div>
+
+    <script>
+        document.getElementById('upload-form').onsubmit = async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const response = await fetch('/upload', {
+                method: 'POST',
+                body: formData
+            });
+            const data = await response.json();
+            alert(data.message);
+        };
+
+        document.getElementById('send').onclick = async () => {
+            const message = document.getElementById('message').value;
+            const response = await fetch('/chat', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ message })
+            });
+            const data = await response.json();
+            document.getElementById('response').innerText = data.response || "Error occurred.";
+        };
+    </script>
+</body>
+</html>
